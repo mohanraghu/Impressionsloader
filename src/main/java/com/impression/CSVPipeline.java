@@ -97,7 +97,7 @@ public class CSVPipeline {
 			String[] split = c.element().split(",");
 			// c.output(new TableRow().set("",c.element()));
 			TableRow row = new TableRow();
-			row.set("eventtimestamp", split[0]);
+			row.set("eventdate", split[0]);
 			row.set("impressionid", split[1]);
 			row.set("userid", split[2]);
 			row.set("clientid", split[3]);
