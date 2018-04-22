@@ -62,7 +62,7 @@ public class CSVPipeline {
 		MyOptions options = PipelineOptionsFactory.fromArgs(args).withoutStrictParsing().as(MyOptions.class);
 		Pipeline p = Pipeline.create(options);
 
-		String BUCKET_NAME = "gs://impression_client_bucket/" + args[1].substring(17);
+		String BUCKET_NAME = "gs://impression_client_bucket/" + "*.csv";
 
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));
