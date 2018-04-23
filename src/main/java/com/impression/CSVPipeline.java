@@ -99,12 +99,11 @@ public class CSVPipeline {
 			TableRow row = new TableRow();
 			row.set("eventdate", split[0]);
 			row.set("impressionid", split[1]);
-			row.set("userid", split[2]);
-			row.set("clientid", split[3]);
-			row.set("advertiserid", split[4]);
-			row.set("campaignid", split[5]);
-			row.set("sourceid", split[6]);
-			row.set("stateid", split[7]);
+			row.set("click", split[2]);
+			row.set("device", split[3]);
+			row.set("advertiser", split[4]);
+			row.set("campaign", split[5]);
+			row.set("client", split[6]);
 			c.output(row);
 		}
 	}
