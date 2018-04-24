@@ -73,7 +73,7 @@ public class CSVPipeline {
 		PCollection<String> clines = p.apply(TextIO.read().from(BUCKET_CLICK));
 		PCollection<TableRow> crow = clines.apply(ParDo.of(new ClickStringToRowConverter()));
 		crow.apply(BigQueryIO.<TableRow> writeTableRows()
-				.to("lyrical-epigram-201816:doubleclickdataset_us.click")
+				.to("lyrical-epigram-201816:doubleclickdataset_us.clicks")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
 				.withCreateDisposition(CreateDisposition.CREATE_NEVER));		
 				
