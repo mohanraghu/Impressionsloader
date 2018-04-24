@@ -63,8 +63,8 @@ public class CSVPipeline {
 
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
 		
-		p.apply(TextIO.Read.from(BUCKET_NAME))
-        p.apply(ParDo.of(new MyDoFn()))
+		p.apply(TextIO.Read.from(BUCKET_NAME));
+        p.apply(ParDo.of(new MyDoFn()));
         p.apply(TextIO.Write.to("gs://client1_outgoing/client1_impression_dataexport"));
 		
 		
