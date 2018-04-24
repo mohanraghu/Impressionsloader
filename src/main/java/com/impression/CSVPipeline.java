@@ -64,7 +64,9 @@ public class CSVPipeline {
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));
-		row.apply(TextIO.Write.to("gs://client1_outgoing/client1_impression_dataexport"));
+		row.apply(TextIO.Write.named("WriteToText")
+                            .to("gs://client1_outgoing/client1_impression_dataexport")
+                            .withSuffix(".csv"));		
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclick_client1.impressions")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
@@ -73,7 +75,7 @@ public class CSVPipeline {
 		String BUCKET_CLICK = "gs://client1_incoming/" + "click*";
 		PCollection<String> clines = p.apply(TextIO.read().from(BUCKET_CLICK));
 		PCollection<TableRow> crow = clines.apply(ParDo.of(new ClickStringToRowConverter()));
-		crow.apply(TextIO.Write.to("gs://client1_outgoing/client1_click_dataexport"));
+		//crow.apply(TextIO.Write.to("gs://client1_outgoing/client1_click_dataexport"));
 		crow.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclick_client1.clicks")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
@@ -82,7 +84,7 @@ public class CSVPipeline {
 		String BUCKET_ACTIVITY = "gs://client1_incoming/" + "activity*";
 		PCollection<String> alines = p.apply(TextIO.read().from(BUCKET_ACTIVITY));
 		PCollection<TableRow> arow = alines.apply(ParDo.of(new ActStringToRowConverter()));
-		arow.apply(TextIO.Write.to("gs://client1_outgoing/client1_activity_dataexport"));
+		//arow.apply(TextIO.Write.to("gs://client1_outgoing/client1_activity_dataexport"));
 		arow.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclick_client1.activity")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
