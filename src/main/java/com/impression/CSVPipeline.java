@@ -140,8 +140,7 @@ public class CSVPipeline {
 		}
 	}
 	
-	public class MyDoFn extends DoFn&lt;String, String&gt {
- 
+	public class MyDoFn extends DoFn<String, String> { 
       @Override
       public void processElement(ProcessContext c) throws Exception {
        String[] event = c.element().split(",");
