@@ -62,10 +62,11 @@ public class CSVPipeline {
 		Pipeline p = Pipeline.create(options);
 
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
-		PCollection<String> wlines = p.apply(TextIO.Read.named("ReadMyFile").from(BUCKET_NAME));
+        PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
+		PCollection<String> wlines = ...;
 	    wlines.apply(TextIO.Write.named("WriteMyFile").to("gs://client1_outgoing"));      		
 		
-		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
+		
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));				
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclick_client1.impressions")
