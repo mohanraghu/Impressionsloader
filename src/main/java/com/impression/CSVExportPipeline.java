@@ -51,13 +51,7 @@ public class CSVExportPipeline {
 
 	public static void main(String[] args) {
 
-		System.out.println("CSV Loader triggerred ..");
-		for (int i = 0; i < args.length; i++)
-			System.out.println("args " + args[i]);
-
-		PipelineOptionsFactory.register(MyOptions.class);
-		MyOptions options = PipelineOptionsFactory.fromArgs(args).withoutStrictParsing().as(MyOptions.class);
-		Pipeline p = Pipeline.create(options);
+		Pipeline p = Pipeline.create(PipelineOptionsFactory.fromArgs(args));
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
 		String OUTGOING_BUCKET_NAME = "gs://client1_outgoing";
 	
