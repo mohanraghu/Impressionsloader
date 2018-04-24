@@ -140,7 +140,7 @@ public class CSVPipeline {
 	}
 	
 	public class MyDoFn extends DoFn<String, String> { 
-      @ProcessElement
+      @Override
       public void processElement(ProcessContext c)   {
        String[] event = c.element().split(",");
        String mapped = performMappings(event);
