@@ -75,7 +75,15 @@ public class CSVPipeline {
 		crow.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclickdataset_us.clicks")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
-				.withCreateDisposition(CreateDisposition.CREATE_NEVER));		
+				.withCreateDisposition(CreateDisposition.CREATE_NEVER));
+
+		String BUCKET_ACTIVITY = "gs://impression_client_bucket/" + "activity*";
+		PCollection<String> alines = p.apply(TextIO.read().from(BUCKET_ACTIVITY));
+		PCollection<TableRow> arow = clines.apply(ParDo.of(new ActStringToRowConverter()));
+		arow.apply(BigQueryIO.<TableRow> writeTableRows()
+				.to("lyrical-epigram-201816:doubleclickdataset_us.activity")
+				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
+				.withCreateDisposition(CreateDisposition.CREATE_NEVER));				
 				
 		p.run();
 	}
@@ -107,6 +115,19 @@ public class CSVPipeline {
 			TableRow row = new TableRow();
 			row.set("click", split[0]);
 			row.set("impression", split[1]);
+			c.output(row);
+		}
+	}
+	
+	// ClickStringToRowConverter
+	static class ActStringToRowConverter extends DoFn<String, TableRow> {
+		@ProcessElement
+		public void processElement(ProcessContext c) {
+			String[] split = c.element().split(",");
+			// c.output(new TableRow().set("",c.element()));
+			TableRow row = new TableRow();
+			row.set("activity", split[0]);
+			row.set("campaign", split[1]);
 			c.output(row);
 		}
 	}
