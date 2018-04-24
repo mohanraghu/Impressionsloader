@@ -64,9 +64,9 @@ public class CSVPipeline {
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));
-		row.apply(TextIO.Write.named("WriteToText")
-                            .to("gs://client1_outgoing/client1_impression_dataexport")
-                            .withSuffix(".csv"));		
+		row.apply(TextIO.<TableRow> Write.named("WriteToText")
+                .to("gs://client1_outgoing/client1_impression_dataexport")
+                .withSuffix(".csv"));		
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclick_client1.impressions")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
