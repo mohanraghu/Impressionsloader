@@ -51,13 +51,18 @@ public class CSVExportPipeline {
 
 	public static void main(String[] args) {
 
-		Pipeline p = Pipeline.create(PipelineOptionsFactory.fromArgs(args));
+		for (int i = 0; i < args.length; i++)
+		System.out.println("args " + args[i]);
+
+		PipelineOptionsFactory.register(MyOptions.class);
+		MyOptions options = PipelineOptionsFactory.fromArgs(args).withoutStrictParsing().as(MyOptions.class);
+		Pipeline p = Pipeline.create(options);
+		
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
 		String OUTGOING_BUCKET_NAME = "gs://client1_outgoing";
 	
-	    p.apply(TextIO.Read.from(BUCKET_NAME))   // Read input.
-         .apply(new CountWords())               // Do some processing.
-         .apply(TextIO.Write.to(OUTGOING_BUCKET_NAME));   // Write output.
+		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
+    	 lines.apply(TextIO.Write.named("WriteToGCS").to("OUTGOING_BUCKET_NAME"));
  	 
 		p.run();
 		 
