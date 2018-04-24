@@ -140,12 +140,13 @@ public class CSVPipeline {
 		}
 	}
 	
-	public class MyDoFn extends DoFn&lt;String, String&gt;
+	public class MyDoFn extends DoFn&lt;String, String&gt {
  
-    @Override
-    public void processElement(ProcessContext c) throws Exception {
-     String[] event = c.element().split(",");
-     String mapped = performMappings(event);
-     c.output(mapped);
-    }
+      @Override
+      public void processElement(ProcessContext c) throws Exception {
+       String[] event = c.element().split(",");
+       String mapped = performMappings(event);
+       c.output(mapped);
+       }
+	}
 }
