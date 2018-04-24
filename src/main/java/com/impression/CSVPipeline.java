@@ -132,7 +132,6 @@ public class CSVPipeline {
 		@ProcessElement
 		public void processElement(ProcessContext c) {
 			String[] split = c.element().split(",");
-			// c.output(new TableRow().set("",c.element()));
 			TableRow row = new TableRow();
 			row.set("activity", split[0]);
 			row.set("campaign", split[1]);
@@ -141,8 +140,8 @@ public class CSVPipeline {
 	}
 	
 	public class MyDoFn extends DoFn<String, String> { 
-      @Override
-      public void processElement(ProcessContext c) throws Exception {
+      @ProcessElement
+      public void processElement(ProcessContext c)   {
        String[] event = c.element().split(",");
        String mapped = performMappings(event);
        c.output(mapped);
