@@ -62,10 +62,14 @@ public class CSVPipeline {
 		Pipeline p = Pipeline.create(options);
 
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
+		
+		p.apply(TextIO.Read.from(BUCKET_NAME))
+        p.apply(ParDo.of(new MyDoFn()))
+        p.apply(TextIO.Write.to("gs://client1_outgoing/client1_impression_dataexport"));
+		
+		
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
-		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));
-		row.apply(TextIO.<TableRow> Write.to("gs://client1_outgoing/client1_impression_dataexport")
-                .withSuffix(".csv"));		
+		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));				
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclick_client1.impressions")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
@@ -135,4 +139,13 @@ public class CSVPipeline {
 			c.output(row);
 		}
 	}
+	
+	public class MyDoFn extends DoFn&lt;String, String&gt;
+ 
+    @Override
+    public void processElement(ProcessContext c) throws Exception {
+     String[] event = c.element().split(",");
+     String mapped = performMappings(event);
+     c.output(mapped);
+    }
 }
