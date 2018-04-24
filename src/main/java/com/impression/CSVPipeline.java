@@ -57,36 +57,26 @@ public class CSVPipeline {
 		for (int i = 0; i < args.length; i++)
 			System.out.println("args " + args[i]);
 
-		//Pipeline p = Pipeline.create(PipelineOptionsFactory.fromArgs(args).withValidation().create());
 		PipelineOptionsFactory.register(MyOptions.class);
 		MyOptions options = PipelineOptionsFactory.fromArgs(args).withoutStrictParsing().as(MyOptions.class);
 		Pipeline p = Pipeline.create(options);
 
-		String BUCKET_NAME = "gs://impression_client_bucket/" + "*.csv";
-
+		String BUCKET_NAME = "gs://impression_client_bucket/" + "Impressions*";
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));
-
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclickdataset_us.impressions")
-				// .withSchema(getSchema())
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
 				.withCreateDisposition(CreateDisposition.CREATE_NEVER));
-
-		// p.apply(Create.of("Hello", "World"))
-		// .apply(MapElements.via(new SimpleFunction<String, String>() {
-		// @Override
-		// public String apply(String input) {
-		// return input.toUpperCase();
-		// }
-		// }))
-		// .apply(ParDo.of(new DoFn<String, Void>() {
-		// @ProcessElement
-		// public void processElement(ProcessContext c) {
-		// LOG.info(c.element());
-		// }
-		// }));
-
+				
+		String BUCKET_CLICK = "gs://impression_client_bucket/" + "click*";
+		PCollection<String> clines = p.apply(TextIO.read().from(BUCKET_CLICK));
+		PCollection<TableRow> crow = clines.apply(ParDo.of(new ClickStringToRowConverter()));
+		crow.apply(BigQueryIO.<TableRow> writeTableRows()
+				.to("lyrical-epigram-201816:doubleclickdataset_us.click")
+				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
+				.withCreateDisposition(CreateDisposition.CREATE_NEVER));		
+				
 		p.run();
 	}
 
@@ -104,6 +94,19 @@ public class CSVPipeline {
 			row.set("advertiser", split[4]);
 			row.set("campaign", split[5]);
 			row.set("client", split[6]);
+			c.output(row);
+		}
+	}
+	
+	// ClickStringToRowConverter
+	static class ClickStringToRowConverter extends DoFn<String, TableRow> {
+		@ProcessElement
+		public void processElement(ProcessContext c) {
+			String[] split = c.element().split(",");
+			// c.output(new TableRow().set("",c.element()));
+			TableRow row = new TableRow();
+			row.set("click", split[0]);
+			row.set("impression", split[1]);
 			c.output(row);
 		}
 	}
