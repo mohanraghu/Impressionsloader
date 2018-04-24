@@ -62,11 +62,8 @@ public class CSVPipeline {
 		Pipeline p = Pipeline.create(options);
 
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
-		
-		p.apply(TextIO.Read.from(BUCKET_NAME));
-        p.apply(ParDo.of(new MyDoFn()));
-        p.apply(TextIO.Write.to("gs://client1_outgoing/client1_impression_dataexport"));
-		
+		PCollection<String> wlines = p.apply(TextIO.Read.named("ReadMyFile").from(BUCKET_NAME));
+	    wlines.apply(TextIO.Write.named("WriteMyFile").to("gs://client1_outgoing"));      		
 		
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));				
@@ -139,12 +136,5 @@ public class CSVPipeline {
 		}
 	}
 	
-	public class MyDoFn extends DoFn<String, String> { 
-      @Override
-      public void processElement(ProcessContext c)   {
-       String[] event = c.element().split(",");
-       String mapped = performMappings(event);
-       c.output(mapped);
-       }
-	}
+	
 }
