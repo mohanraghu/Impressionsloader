@@ -63,6 +63,7 @@ public class CSVPipeline {
 
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
+		lines.apply(ParDo.of(new MyDoFn()));
 		lines.apply(TextIO.Write.to("gs://client1_outgoing/client1_impression_dataexport"));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
@@ -72,6 +73,7 @@ public class CSVPipeline {
 				
 		String BUCKET_CLICK = "gs://client1_incoming/" + "click*";
 		PCollection<String> clines = p.apply(TextIO.read().from(BUCKET_CLICK));
+		lines.apply(ParDo.of(new MyDoFn()));
 		clines.apply(TextIO.Write.to("gs://client1_outgoing/client1_click_dataexport"));
 		PCollection<TableRow> crow = clines.apply(ParDo.of(new ClickStringToRowConverter()));
 		crow.apply(BigQueryIO.<TableRow> writeTableRows()
@@ -81,6 +83,7 @@ public class CSVPipeline {
 
 		String BUCKET_ACTIVITY = "gs://client1_incoming/" + "activity*";
 		PCollection<String> alines = p.apply(TextIO.read().from(BUCKET_ACTIVITY));
+		lines.apply(ParDo.of(new MyDoFn()));
 		alines.apply(TextIO.Write.to("gs://client1_outgoing/client1_activity_dataexport"));
 		PCollection<TableRow> arow = alines.apply(ParDo.of(new ActStringToRowConverter()));
 		arow.apply(BigQueryIO.<TableRow> writeTableRows()
