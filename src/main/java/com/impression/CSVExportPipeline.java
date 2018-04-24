@@ -61,8 +61,8 @@ public class CSVExportPipeline {
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
 		String OUTGOING_BUCKET_NAME = "gs://client1_outgoing";
 	
-		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
-    	 lines.apply(TextIO.Write.named("WriteToGCS").to("OUTGOING_BUCKET_NAME"));
+		 p.apply(TextIO.read().from(BUCKET_NAME))
+    	  .apply(TextIO.Write.named("WriteToGCS").to("OUTGOING_BUCKET_NAME"));
  	 
 		p.run();
 		 
