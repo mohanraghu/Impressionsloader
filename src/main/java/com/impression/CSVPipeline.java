@@ -60,14 +60,14 @@ public class CSVPipeline {
 		PipelineOptionsFactory.register(MyOptions.class);
 		MyOptions options = PipelineOptionsFactory.fromArgs(args).withoutStrictParsing().as(MyOptions.class);
 		Pipeline p = Pipeline.create(options);
-		Pipeline p1 = Pipeline.create(options);
-
 		String BUCKET_NAME = "gs://client1_incoming/" + "Impressions*";
-        PCollection<String> lines = p1.apply(TextIO.read().from(BUCKET_NAME));
-		PCollection<String> wlines = p1.apply(TextIO.read().from(BUCKET_NAME));
-	    wlines.apply(TextIO.Write.named("WriteMyFile").to("gs://client1_outgoing"));      		
+
 		
+		//Pipeline p1 = Pipeline.create(options);
+		//PCollection<String> wlines = p1.apply(TextIO.read().from(BUCKET_NAME));
+	    //wlines.apply(TextIO.Write.named("WriteMyFile").to("gs://client1_outgoing"));      		
 		
+		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));				
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
 				.to("lyrical-epigram-201816:doubleclick_client1.impressions")
@@ -93,7 +93,7 @@ public class CSVPipeline {
 				.withCreateDisposition(CreateDisposition.CREATE_NEVER));				
 				
 		p.run();
-		p1.run();
+		 
 	}
 
 	// StringToRowConverter
