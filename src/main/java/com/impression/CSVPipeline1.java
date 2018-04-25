@@ -70,7 +70,7 @@ public class CSVPipeline1 {
 		PCollection<String> lines = p.apply(TextIO.read().from(BUCKET_NAME));
 		PCollection<TableRow> row = lines.apply(ParDo.of(new StringToRowConverter()));				
 		row.apply(BigQueryIO.<TableRow> writeTableRows()
-				.to("lyrical-epigram-201816:doubleclick_client1.impressions")
+				.to("lyrical-epigram-201816:doubleclick_client2.impressions")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
 				.withCreateDisposition(CreateDisposition.CREATE_NEVER));
 				
@@ -79,7 +79,7 @@ public class CSVPipeline1 {
 		PCollection<TableRow> crow = clines.apply(ParDo.of(new ClickStringToRowConverter()));
 		//crow.apply(TextIO.Write.to("gs://client2_outgoing/client2_click_dataexport"));
 		crow.apply(BigQueryIO.<TableRow> writeTableRows()
-				.to("lyrical-epigram-201816:doubleclick_client1.clicks")
+				.to("lyrical-epigram-201816:doubleclick_client2.clicks")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
 				.withCreateDisposition(CreateDisposition.CREATE_NEVER));
 
@@ -88,7 +88,7 @@ public class CSVPipeline1 {
 		PCollection<TableRow> arow = alines.apply(ParDo.of(new ActStringToRowConverter()));
 		//arow.apply(TextIO.Write.to("gs://client2_outgoing/client2_activity_dataexport"));
 		arow.apply(BigQueryIO.<TableRow> writeTableRows()
-				.to("lyrical-epigram-201816:doubleclick_client1.activity")
+				.to("lyrical-epigram-201816:doubleclick_client2.activity")
 				.withWriteDisposition(WriteDisposition.WRITE_APPEND)
 				.withCreateDisposition(CreateDisposition.CREATE_NEVER));				
 				
